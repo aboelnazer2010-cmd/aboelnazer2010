@@ -1,6 +1,5 @@
 name: Build Android APK
 
-# سيعمل تلقائياً عند الرفع للفرع الرئيسي
 on:
   push:
     branches: [ "main", "master" ]
@@ -11,17 +10,16 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # تم التحديث هنا إلى v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # تم التحديث هنا إلى v4
         with:
           node-version: '18'
 
       - name: Install Dependencies
         run: npm install
 
-      # إضافة أوامر تثبيت Capacitor تحسباً لعدم وجودها في package.json
       - name: Install Capacitor CLI & Core
         run: npm install @capacitor/core @capacitor/cli @capacitor/android
 
@@ -43,7 +41,7 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # تم التحديث هنا إلى v4
         with:
           name: Share-AboElnazer-App
           path: android/app/build/outputs/apk/debug/app-debug.apk
