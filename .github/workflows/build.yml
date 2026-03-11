@@ -10,10 +10,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4 # تم التحديث هنا إلى v4
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4 # تم التحديث هنا إلى v4
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -26,15 +26,29 @@ jobs:
       - name: Build Next.js (Static Export)
         run: npm run build
 
-      - name: Init & Sync Capacitor Android
+      # هنا يكمن السحر: سنصنع ملف الإعدادات بأنفسنا لنتجاوز الأداة المزعجة
+      - name: Create Capacitor Config Manually
         run: |
-          npx cap init "Share AboElnazer" "com.aboelnazer.app" --web-dir out --force
-          npx cap add android || true
+          echo '{ "appId": "com.aboelnazer.app", "appName": "ShareAboElnazer", "webDir": "out", "bundledWebRuntime": false }' > capacitor.config.json
+
+      - name: Add and Sync Android
+        run: |
+          npx cap add android
           npx cap sync android
 
       - name: Grant Execute Permission for Gradlew
         working-directory: ./android
         run: chmod +x gradlew
+
+      - name: Build APK
+        working-directory: ./android
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Share-AboElnazer-App
+          path: android/app/build/outputs/apk/debug/app-debug.apk        run: chmod +x gradlew
 
       - name: Build APK
         working-directory: ./android
