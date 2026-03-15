@@ -288,7 +288,7 @@ export default function NexusApp() {
                 <Plus size={14} />
               </button>
             </h2>
-            <ul className="space-y-1">
+            <ul className="space-y-0.5 mt-1">
               {channels.map((channel, i) => (
                 <li 
                   key={i} 
@@ -296,10 +296,10 @@ export default function NexusApp() {
                     setCurrentChannel(channel);
                     setIsSidebarOpen(false);
                   }}
-                  className={`flex items-center px-3 py-2 rounded-lg cursor-pointer transition-all ${currentChannel === channel ? 'bg-indigo-500/10 text-indigo-400 font-medium' : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'}`}
+                  className={`flex items-center px-2 py-1.5 rounded-md cursor-pointer transition-all group ${currentChannel === channel ? 'bg-zinc-800/80 text-white' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-300'}`}
                 >
-                  <Hash size={16} className={`ltr:mr-2 rtl:ml-2 ${currentChannel === channel ? 'text-indigo-400' : 'text-zinc-500'}`} />
-                  <span className="truncate">{channel}</span>
+                  <Hash size={18} className={`ltr:mr-1.5 rtl:ml-1.5 flex-shrink-0 ${currentChannel === channel ? 'text-zinc-400' : 'text-zinc-500 group-hover:text-zinc-400'}`} />
+                  <span className={`truncate ${currentChannel === channel ? 'font-medium' : ''}`}>{channel}</span>
                 </li>
               ))}
             </ul>
@@ -566,7 +566,7 @@ export default function NexusApp() {
           <span className="font-bold text-white text-lg tracking-tight">{currentChannel}</span>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-1 z-10 custom-scrollbar">
           <AnimatePresence initial={false}>
             {messages.map((msg, i) => {
               const isMe = msg.sender === username || !msg.sender;
@@ -575,42 +575,42 @@ export default function NexusApp() {
                 key={i}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`flex group ${isMe ? (isRtl ? 'flex-row-reverse' : 'flex-row-reverse') : ''}`}
+                className={`flex group hover:bg-white/[0.02] -mx-4 px-4 py-1 transition-colors`}
               >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 mt-1 shadow-sm text-sm ${isMe ? 'bg-gradient-to-br from-emerald-400 to-emerald-600 ltr:ml-4 rtl:mr-4' : 'bg-gradient-to-br from-indigo-500 to-violet-600 ltr:mr-4 rtl:ml-4'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 mt-0.5 shadow-sm text-sm ${isMe ? 'bg-gradient-to-br from-emerald-400 to-emerald-600 ltr:mr-4 rtl:ml-4' : 'bg-gradient-to-br from-indigo-500 to-violet-600 ltr:mr-4 rtl:ml-4'}`}>
                   {msg.sender ? msg.sender.substring(0, 2).toUpperCase() : 'ME'}
                 </div>
-                <div className={`flex-1 min-w-0 flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                  <div className={`flex items-baseline ${isMe ? 'flex-row-reverse' : ''}`}>
-                    <span className={`font-semibold text-white ${isMe ? 'ltr:ml-2 rtl:mr-2' : 'ltr:mr-2 rtl:ml-2'}`}>{msg.sender || 'Me'}</span>
+                <div className={`flex-1 min-w-0 flex flex-col`}>
+                  <div className={`flex items-baseline`}>
+                    <span className={`font-semibold text-white ltr:mr-2 rtl:ml-2 hover:underline cursor-pointer`}>{msg.sender || 'Me'}</span>
                     <span className="text-[11px] text-zinc-500 font-medium">
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   
                   {msg.type === 'chat' ? (
-                    <div className={`mt-1.5 relative group/msg max-w-[85%] md:max-w-[75%]`}>
-                      <div className={`px-4 py-2.5 rounded-2xl text-[15px] leading-relaxed break-words shadow-sm ${isMe ? 'bg-indigo-600 text-white rounded-tr-sm' : 'bg-zinc-800 text-zinc-200 rounded-tl-sm border border-white/5'}`}>
+                    <div className={`mt-0.5 relative group/msg`}>
+                      <div className={`text-[15px] leading-relaxed break-words text-zinc-300`}>
                         {msg.content}
                       </div>
                       <button
                         onClick={() => navigator.clipboard.writeText(msg.content)}
-                        className={`absolute top-1/2 -translate-y-1/2 opacity-0 group-hover/msg:opacity-100 text-zinc-400 hover:text-white transition-all p-1.5 bg-zinc-800 border border-white/10 rounded-lg shadow-lg ${isMe ? 'ltr:-left-10 rtl:-right-10' : 'ltr:-right-10 rtl:-left-10'}`}
+                        className={`absolute -top-6 ltr:right-0 rtl:left-0 opacity-0 group-hover/msg:opacity-100 text-zinc-400 hover:text-white transition-all p-1.5 bg-zinc-800 border border-white/10 rounded-lg shadow-lg`}
                         title="Copy message"
                       >
                         <Copy size={14} />
                       </button>
                     </div>
                   ) : (
-                    <div className={`mt-1.5 bg-zinc-800 border border-white/5 rounded-2xl p-3 flex items-center max-w-sm shadow-sm ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}>
-                      <div className="w-12 h-12 bg-zinc-900/50 rounded-xl flex items-center justify-center ltr:mr-3 rtl:ml-3 border border-white/5">
-                        <File size={24} className={isMe ? 'text-emerald-400' : 'text-indigo-400'} />
+                    <div className={`mt-2 bg-zinc-900/50 border border-white/5 rounded-xl p-3 flex items-center max-w-sm shadow-sm hover:bg-zinc-800/50 transition-colors`}>
+                      <div className="w-10 h-10 bg-zinc-800 rounded-lg flex items-center justify-center ltr:mr-3 rtl:ml-3 border border-white/5">
+                        <File size={20} className={isMe ? 'text-emerald-400' : 'text-indigo-400'} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className={`text-sm font-semibold hover:underline cursor-pointer truncate ${isMe ? 'text-emerald-400' : 'text-indigo-400'}`} dir="ltr">
+                        <div className={`text-sm font-medium hover:underline cursor-pointer truncate text-indigo-400`} dir="ltr">
                           <a href={msg.url} download={msg.name}>{msg.name}</a>
                         </div>
-                        <div className="text-xs text-zinc-500 font-medium mt-0.5" dir="ltr">{(msg.size / 1024 / 1024).toFixed(2)} MB</div>
+                        <div className="text-xs text-zinc-500 mt-0.5" dir="ltr">{(msg.size / 1024 / 1024).toFixed(2)} MB</div>
                       </div>
                     </div>
                   )}
