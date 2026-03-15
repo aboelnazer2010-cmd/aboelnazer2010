@@ -25,33 +25,24 @@ export interface FileTransfer {
   data?: Blob;
 }
 
+export interface FileChunk {
+  id?: number;
+  fileId: string;
+  index: number;
+  data: ArrayBuffer;
+}
+
 const db = new Dexie('NexusP2P') as Dexie & {
   messages: EntityTable<Message, 'id'>;
   files: EntityTable<FileTransfer, 'id'>;
+  chunks: EntityTable<FileChunk, 'id'>;
 };
 
-db.version(1).stores({
-  messages: '++id, sender, roomId, timestamp',
-  files: '++id, name, sender, roomId, status'
-});
-
-db.version(2).stores({
+// تحديث الإصدار لدعم نظام الأجزاء (Chunks)
+db.version(5).stores({
   messages: '++id, sender, roomId, channelId, timestamp',
-  files: '++id, name, sender, roomId, status'
-}).upgrade(tx => {
-  return tx.table('messages').toCollection().modify(msg => {
-    msg.channelId = msg.channelId || 'general';
-    msg.type = msg.type || 'chat';
-  });
-});
-
-db.version(4).stores({
-  messages: '++id, sender, roomId, channelId, timestamp',
-  files: '++id, name, sender, roomId, sessionId, status, [roomId+sessionId]'
-}).upgrade(tx => {
-  return tx.table('files').toCollection().modify(file => {
-    file.sessionId = file.sessionId || 'legacy';
-  });
+  files: '++id, name, sender, roomId, sessionId, status, [roomId+sessionId]',
+  chunks: '++id, fileId, [fileId+index]'
 });
 
 export { db };
